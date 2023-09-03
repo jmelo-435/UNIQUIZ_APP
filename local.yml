@@ -21,6 +21,10 @@ services:
     ports:
       - '8000:8000'
     command: /start
+    networks:
+      bridge:
+        aliases:
+          - uniquiz_local_django
 
   postgres:
     build:
@@ -33,6 +37,35 @@ services:
       - uniquiz_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
+    networks:
+      bridge:
+        aliases:
+          - postgres
+  uniquiz_react_app:
+    build:
+      context: .
+      dockerfile: ./compose/local/react/Dockerfile
+    volumes:
+      - ./react_app/src:/user/src/react_app/src:z
+    ports:
+      - 3000:3000
+    networks:
+      bridge:
+        aliases:
+          - uniquiz_react_app
+
+  uniquiz_nginx:
+    image: nginx:1.15
+    container_name: uniquiz_nginx
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf:rw
+      - ./static_django:/etc/nginx/static_django
+    ports:
+      - 80:80
+    networks:
+      - bridge
+    depends_on:
+      - uniquiz_react_app
 
   docs:
     image: uniquiz_local_docs
@@ -49,3 +82,5 @@ services:
     ports:
       - '9000:9000'
     command: /start-docs
+networks:
+  bridge:

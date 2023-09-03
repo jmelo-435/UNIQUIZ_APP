@@ -85,6 +85,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "uniquiz.users",
     # Your stuff: custom apps go here
+    "uniquiz.test",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -147,7 +148,7 @@ MIDDLEWARE = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
 STATIC_ROOT = str(BASE_DIR / "staticfiles")
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
-STATIC_URL = "/static/"
+STATIC_URL = "api/uniquiz/static/"
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
 STATICFILES_DIRS = [str(APPS_DIR / "static")]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
@@ -225,7 +226,7 @@ EMAIL_TIMEOUT = 5
 # ADMIN
 # ------------------------------------------------------------------------------
 # Django Admin URL.
-ADMIN_URL = "admin/"
+ADMIN_URL = "api/uniquiz/admin/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = [("""Jeferson Melo""", "jeferson-melo@uniquiz.top")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
@@ -297,7 +298,7 @@ REST_FRAMEWORK = {
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
-CORS_URLS_REGEX = r"^/api/.*$"
+CORS_URLS_REGEX = r"^/api/uniquiz/.*$"
 
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
