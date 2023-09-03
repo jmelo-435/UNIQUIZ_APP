@@ -19,7 +19,7 @@ certificatesResolvers:
   letsencrypt:
     # https://docs.traefik.io/master/https/acme/#lets-encrypt
     acme:
-      email: 'jeferson-melo@uniquiz.top'
+      email: 'jefersonmedeiros000@gmail.com'
       storage: /etc/traefik/acme/acme.json
       # https://docs.traefik.io/master/https/acme/#httpchallenge
       httpChallenge:
@@ -31,9 +31,7 @@ http:
       rule: 'Host(`uniquiz.top`) || Host(`www.uniquiz.top`)'
       entryPoints:
         - web-secure
-      middlewares:
-        - csrf
-      service: django
+      service: react
       tls:
         # https://docs.traefik.io/master/routing/routers/#certresolver
         certResolver: letsencrypt
@@ -45,6 +43,16 @@ http:
       middlewares:
         - csrf
       service: django-media
+      tls:
+        certResolver: letsencrypt
+    
+    api-router:
+      rule: "Host(`uniquiz.top`)|| Host(`www.uniquiz.top`) && PathPrefix(`/api/uniquiz/`)"
+      entryPoints:
+        - web-secure
+      middlewares:
+        - csrf
+      service: django
       tls:
         certResolver: letsencrypt
 
@@ -59,12 +67,17 @@ http:
     django:
       loadBalancer:
         servers:
-          - url: http://django:5000
+          - url: http://uniquiz_production_django:5000
 
     django-media:
       loadBalancer:
         servers:
-          - url: http://nginx:80
+          - url: http://uniquiz_production_nginx:80
+
+    react:
+      loadBalancer:
+        servers:
+          - url: http://uniquiz_production_react:3000
 
 providers:
   # https://docs.traefik.io/master/providers/file/
