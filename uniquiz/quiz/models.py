@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+import random
 
 
 
@@ -22,9 +23,10 @@ class Question(models.Model):
 # como chaves estrangeiras para o modelo de perguntas. As perguntas podem ser definidas como certas, erradas ou não respondidas.
 class Quiz(models.Model):
 
+    id = models.AutoField(primary_key=True)
     player_name = models.CharField(max_length=200)
     start_time = models.DateTimeField('start time', auto_now_add=True)
-    end_time = models.DateTimeField('end time')
+    end_time = models.DateTimeField('end time', null=True)
     question1 = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question1')
     question2 = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question2')
     question3 = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='question3')
@@ -82,18 +84,19 @@ class Quiz(models.Model):
 
     #Associa uma pergunta aleatória(sem que hajam perguntas repetidas) a cada campo de pergunta do quiz no momento da criação do quiz
     def save(self, *args, **kwargs):
-        questions = Question.objects.all()
-        questions = questions.order_by('?')[:10]
-        self.question1 = questions[0]
-        self.question2 = questions[1]
-        self.question3 = questions[2]
-        self.question4 = questions[3]
-        self.question5 = questions[4]
-        self.question6 = questions[5]
-        self.question7 = questions[6]
-        self.question8 = questions[7]
-        self.question9 = questions[8]
-        self.question10 = questions[9]
+        questions = list(Question.objects.all())
+
+        random_items = random.sample(questions, 10)
+        self.question1 = random_items[0]
+        self.question2 = random_items[1]
+        self.question3 = random_items[2]
+        self.question4 = random_items[3]
+        self.question5 = random_items[4]
+        self.question6 = random_items[5]
+        self.question7 = random_items[6]
+        self.question8 = random_items[7]
+        self.question9 = random_items[8]
+        self.question10 = random_items[9]
         super(Quiz, self).save(*args, **kwargs)
 
     #Define se o quiz está em andamento ou não
