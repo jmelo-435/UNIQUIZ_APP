@@ -47,6 +47,7 @@ class Quiz(models.Model):
     answer8 = models.IntegerField(default=0)
     answer9 = models.IntegerField(default=0)
     answer10 = models.IntegerField(default=0)
+    current_question = models.IntegerField(default=1)
 
     def __str__(self):
         return str(self.start_time) + " - " + str(self.end_time)
@@ -84,6 +85,8 @@ class Quiz(models.Model):
 
     #Associa uma pergunta aleatória(sem que hajam perguntas repetidas) a cada campo de pergunta do quiz no momento da criação do quiz
     def save(self, *args, **kwargs):
+        if self.pk is not None:
+            return super(Quiz, self).save(*args, **kwargs)
         questions = list(Question.objects.all())
 
         random_items = random.sample(questions, 10)
