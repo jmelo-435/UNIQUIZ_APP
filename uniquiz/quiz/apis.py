@@ -1,7 +1,23 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .services import start_quiz,get_question,answer_question
+from rest_framework import generics
+from .serializers import QuizSerializer
+from quiz.models import Quiz
+from rest_framework.pagination import PageNumberPagination
 
+#Classe que define a paginação dos resultados do ranking
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+#Endpoint que retorna o ranking (uma lista de quizzes ordenados por score).
+class QuizList(generics.ListAPIView):
+    permission_classes = []
+    queryset = Quiz.objects.all().order_by('-total_score')
+    serializer_class = QuizSerializer
+    pagination_class = StandardResultsSetPagination
 
 
 #Endpoint que recebe um nome de jogador e inicia um quiz para ele, retornando o id do quiz via cookie
@@ -15,7 +31,7 @@ class StartQuiz(APIView):
         response.set_cookie('quiz_id', quiz.id)
         return response
 
-#Endpoint que recebe a resposta da pergunta atual e retorna a próxima pergunta
+#Endpoint que recebe a resposta da pergunta atual e retorna a próxima pergunta, ou o score e a posição do quiz no rank caso o quiz tenha acabado.
 class Answer(APIView):
     permission_classes = []
     
@@ -24,9 +40,12 @@ class Answer(APIView):
         answer = request.data.get('answer')
         answer_question(quiz_id, answer)
         next_question = get_question(quiz_id)
-        if next_question == True:
-            response = Response({'status': 'ok', 'is_quiz_over': True})
-            response.set_cookie('quiz_id', '', max_age=0)
-            return response
+        try:
+            if next_question['is_quiz_over'] == True:
+                response = Response({'status': 'ok', 'is_quiz_over': True, 'score': next_question['score'], 'rank': next_question['rank']})
+                response.set_cookie('quiz_id', '', max_age=0)
+                return response
+        except:
+            pass
         return Response({'status': 'ok', 'is_quiz_over': False, 'question': next_question})
     

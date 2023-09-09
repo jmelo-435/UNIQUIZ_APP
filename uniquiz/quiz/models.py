@@ -48,14 +48,16 @@ class Quiz(models.Model):
     answer9 = models.IntegerField(default=0)
     answer10 = models.IntegerField(default=0)
     current_question = models.IntegerField(default=1)
+    total_score = models.DecimalField(default=0, max_digits=5, decimal_places=2)
 
     def __str__(self):
         return str(self.start_time) + " - " + str(self.end_time)
-    
-    #Calcula a pontuação do quiz, comparando as respostas dadas com as respostas corretas
-    @property
-    def total_score(self)->int:
+        
+    #Define o tempo de fim do quiz como o momento atual, e calcula o score do quiz, dividindo o número de acertos pela duração do quiz
+    def finish_quiz(self):
+        self.end_time = timezone.now()
         score = 0
+        duration = self.duration
         if self.answer1 == self.question1.correct_answer:
             score += 1
         if self.answer2 == self.question2.correct_answer:
@@ -76,11 +78,8 @@ class Quiz(models.Model):
             score += 1
         if self.answer10 == self.question10.correct_answer:
             score += 1
-        return score
-
-    #Define o tempo de fim do quiz como o momento atual
-    def finish_quiz(self):
-        self.end_time = timezone.now()
+        points=score/duration
+        self.total_score=points
         self.save()
 
     #Associa uma pergunta aleatória(sem que hajam perguntas repetidas) a cada campo de pergunta do quiz no momento da criação do quiz

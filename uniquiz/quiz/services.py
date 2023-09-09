@@ -18,7 +18,9 @@ def get_question(quiz_id: int) -> dict:
     question_number = quiz.current_question
     if question_number > 10:
         quiz.finish_quiz()
-        return True
+        score = get_score(quiz_id)
+        rank = get_rank(quiz_id)
+        return {'is_quiz_over': True, 'score': score, 'rank': rank}
     question = getattr(quiz, f'question{question_number}')
     serializer = QuestionSerializer(question)
     return serializer.data
@@ -31,4 +33,14 @@ def answer_question(quiz_id: int, answer: int) -> bool:
     quiz.current_question = question_number + 1
     quiz.save()
 
-#TODO: Implementar a função que retorna o score do quiz(número de acertos divido pela duração do quiz), e a posição do quiz no ranking.
+#Função que retorna o score do quiz.
+def get_score(quiz_id: int) -> int:
+    quiz = _get_quiz(quiz_id)
+    score = quiz.total_score
+    return score
+
+#Função que retorna a posição do quiz no rank.
+def get_rank(quiz_id: int) -> int:
+    quiz = _get_quiz(quiz_id)
+    rank = Quiz.objects.filter(total_score__gt=quiz.total_score).count() + 1
+    return rank
