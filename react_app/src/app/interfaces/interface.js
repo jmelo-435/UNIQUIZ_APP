@@ -4,6 +4,7 @@ const root = '/api/uniquiz/'
 
 const Endpoints = Object.freeze({
 test: 'test/time',
+ranking: 'quiz/ranking',
 })
 
 const Methods = Object.freeze({
@@ -46,6 +47,15 @@ async function getApiResponse (parameters) {
 export async function test () {
   const parameters = new ApiRequestParameters(
     Endpoints.test,
+    null,
+    Methods.GET
+  )
+  return getApiResponse(parameters)
+}
+
+export async function getRanking () {
+  const parameters = new ApiRequestParameters(
+    Endpoints.ranking,
     null,
     Methods.GET
   )

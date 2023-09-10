@@ -15,9 +15,15 @@ class StandardResultsSetPagination(PageNumberPagination):
 #Endpoint que retorna o ranking (uma lista de quizzes ordenados por score).
 class QuizList(generics.ListAPIView):
     permission_classes = []
-    queryset = Quiz.objects.all().order_by('-total_score')
-    serializer_class = QuizSerializer
-    pagination_class = StandardResultsSetPagination
+    #Acrescenta a posição do quiz no rank ao resultado
+    def get_queryset(self):
+        queryset = Quiz.objects.all().order_by('-total_score')
+        for i in range(len(queryset)):
+            queryset[i].rank = i+1
+        return queryset
+    #Acrescenta o ranking ao serializer
+    def get_serializer_class(self):
+        return QuizSerializer
 
 
 #Endpoint que recebe um nome de jogador e inicia um quiz para ele, retornando o id do quiz via cookie

@@ -10,6 +10,7 @@ RUN npm i -D express axios parcel-bundler react react-dom
 RUN npm install @mui/material @emotion/react @emotion/styled @fontsource/roboto @mui/icons-material
 RUN npm install react-router-dom
 RUN npm install bx24-api
+RUN npm install @mui/x-data-grid
 
 COPY ./react_app ./
 COPY ./compose/local/react/config.json ./src
