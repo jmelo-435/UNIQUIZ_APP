@@ -20,7 +20,6 @@ const Ranking = () => {
       const rankingData = await getRanking()
 
       setResults(rankingData.data)
-      setTime(time.data.serverTime)
     }
     fetch()
   }, [])
